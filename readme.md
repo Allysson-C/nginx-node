@@ -11,7 +11,7 @@ O desafio consiste em apresentar uma página com o título **Full Cycle Rocks!**
 Primeiro na pasta raiz rode o comando
 
 ```bash
-docker-compose up -d 
+docker compose up -d 
 ```
 
 Após alguns instantes a aplicação terá sido iniciada. Para acessa-lá entre no seguinte endereço:
