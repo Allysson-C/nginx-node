@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  mysql:
+    build: 
+      context: ./mysql
+      dockerfile: Dockerfile.prod
+    image: allysoncs/mysql:prod
+    command: --innodb-use-native-aio=0  
+    container_name: database
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql/db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - app-nodejs
+
+  nodejs:
+    build:
+      context: ./nodejs
+      dockerfile: Dockerfile.prod
+    volumes:
+      - ./nodejs:/usr/src/app
+    image: allysoncs/nodejs:prod
+    container_name: nodejs
+    entrypoint: dockerize -wait tcp://mysql:3306 -timeout 20s node src/index.js
+    networks:
+      - app-nodejs
+    depends_on:
+      - mysql
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.prod
+    image: allysoncs/nginx:prod
+    container_name: nginx
+    networks:
+      - app-nodejs
+    ports:
+      - "8080:80"
+    depends_on:
+      - nodejs
+
+networks:
+  app-nodejs:
+    driver: bridge
