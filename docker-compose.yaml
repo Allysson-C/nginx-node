@@ -24,6 +24,7 @@ services:
       dockerfile: Dockerfile.prod
     volumes:
       - ./nodejs:/usr/src/app
+      - /usr/src/app/node_modules
     image: allysoncs/nodejs:prod
     container_name: nodejs
     entrypoint: dockerize -wait tcp://mysql:3306 -timeout 20s node src/index.js
